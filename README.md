@@ -2,36 +2,34 @@
 
 ## Babel
 
-**Текущая локаль**
+### Настройки переводов
+
 `config/settings.py`
-
-```python
-LOCALE = 'ru'
-```
-
-**Настройки для переводов**
-`config/locale.py`
-
-По умолчанию:
 
 ```python
 DEFAULT_LOCALE = 'en'
 LOCALEDIR = 'locales'
 LOCALEDOMAIN = 'messages'
+
+LOCALE = 'ru'
 ```
 
-**Создание нового каталога на основе старого**
-`pybabel init -d locales -l en -i locales/ru/LC_MESSAGES/messages.po`
-locales - директория с файлами
-en - новая локаль
-locales/ru/LC_MESSAGES/messages.po - путь к существующему файлу
+### Генерация .po файла для выбранной локали на основе строк в коде приложения
 
-**Генерация .po файла.**
-`pybabel extract -o locales/ru/LC_MESSAGES/messages.po ./`
-locales/ru/LC_MESSAGES/messages.po - создаваемый файл
-./ - директория, откуда генерируем строки
+`python manage.py babel_extract ru`
 
-**Генерация .mo файла. для выбранной локали**
-`pybabel compile -d locales -l en`
-locales - директория с файлами
-en - выбранная локаль
+### Генерация .po файла на основе локали по-умолчанию
+
+`python manage.py babel_init ru`
+
+### Обновление .po файла на основе локали по-умолчанию
+
+`python manage.py babel_update ru`
+
+### Извлечение .po файл для локали по-умолчанию изменений в коде и обновление .po файла выбранной локали
+
+`python manage.py babel_reload ru`
+
+### Генерация .mo файла для выбранной локали
+
+`python manage.py babel_compile ru`
