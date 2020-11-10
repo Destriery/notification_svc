@@ -1,0 +1,12 @@
+build_project.sh
+
+__pycache__
+.pytest_cache
+.venv
+.vscode
+
+.sqlite3
+*.db*
+
+local*.py
+material

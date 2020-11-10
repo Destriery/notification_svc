@@ -1,0 +1,14 @@
+build_project.sh
+
+__pycache__
+.pytest_cache
+.git
+.vscode
+.venv
+
+*.log
+*.pyc
+
+local*.py
+material
+temp
