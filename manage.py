@@ -27,7 +27,8 @@ class Babel:
         getattr(self, self.method)()
 
     def _get_method(self, argv: list) -> None:
-        """Определяем вызываемый метод, либо возвращаем ошибку"""
+        """Определяем вызываемый метод, 
+            либо возвращаем ошибку"""
         self.method = argv[0].replace('babel_', '')
 
         if not hasattr(self, self.method):
@@ -35,14 +36,16 @@ class Babel:
             sys.exit()
 
     def _get_locale(self, argv: list) -> None:
-        """Определяем переданную локаль, либо возвращаем ошибку, либо выбираем локаль по умолчанию, если аргумент не обязателен для метода"""
+        """Определяем переданную локаль, 
+            либо возвращаем ошибку, 
+            либо выбираем локаль по умолчанию, если аргумент не обязателен для метода"""
         try:
             self.locale = argv[1]
         except IndexError:
             if not self.method in self.methods_with_required_locale:
                 self.locale = DEFAULT_LOCALE
             else:
-                message = """Usage: babel_[method] [locale_name]\n\nerror: locale_name is empty"""
+                message = 'Usage: babel_[method] [locale_name]\n\nerror: locale_name is empty'
 
                 print(message)
                 sys.exit()
@@ -66,6 +69,8 @@ class Babel:
     def _extract(self, is_exit: bool=True) -> None:
         """(непосредственная реализация) Генерация .po файла для выбранной локали на основе строк в коде приложения
             Console: `pybabel extract -o locales/ru/LC_MESSAGES/messages.po ./`
+
+            Выделена в отдельный метод, чтобы упростить вызов другими методами класса
         """  
 
         self._mkdir_for_locale()
@@ -99,8 +104,6 @@ class Babel:
             Console: `pybabel init -d locales -l en -i locales/ru/LC_MESSAGES/messages.po`
         """
 
-        # self._mkdir_for_locale()
-
         sys.argv = ['', 'update', f'--domain={LOCALEDOMAIN}', f'--output-dir={LOCALEDIR}', f'--input-file={self.default_locale_file}', f'--locale={self.locale}']
 
         self._run_babel_script()
@@ -133,7 +136,13 @@ class Babel:
 def main():
     argv = sys.argv
 
-    if 'babel_' in argv[1]:
+    try:
+        method_name = argv[1]
+    except IndexError:
+        print(f'Usage: {argv[0]} [method_name] [*args]\n\nerror: "method_name" was not specified')
+        sys.exit()
+
+    if 'babel_' in method_name:
         Babel(argv[1:])
 
 if __name__ == '__main__':
