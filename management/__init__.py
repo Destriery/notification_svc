@@ -2,7 +2,8 @@ import sys
 
 from .babel import Babel
 
-def execute_from_command_line(argv):
+def execute_from_command_line(argv: list) -> None:
+    """Обрабатывает полученные аргументы командной строки и вызывает необходимые методы"""
     try:
         method_name = argv[1]
     except IndexError:

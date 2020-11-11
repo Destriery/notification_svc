@@ -8,7 +8,7 @@ from config.settings import LOCALEDIR, LOCALEDOMAIN, DEFAULT_LOCALE
 class Babel:
     methods_with_required_locale = ('init', 'update', 'compile', 'reload')
 
-    def __init__(self, argv) -> None:
+    def __init__(self, argv: list) -> None:
         self._get_method(argv)
 
         self.project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -57,7 +57,7 @@ class Babel:
             pass
 
     @staticmethod
-    def _run_babel_script(is_exit: bool=True) -> None:
+    def _run_babel_script(is_exit: bool = True) -> None:
         """Запускаем скрипты babel, как утилита pybabel"""
         if is_exit:
             sys.exit(babel_script())
@@ -65,7 +65,7 @@ class Babel:
             babel_script()
 
 
-    def _extract(self, is_exit: bool=True) -> None:
+    def _extract(self, is_exit: bool = True) -> None:
         """(непосредственная реализация) Генерация .po файла для выбранной локали на основе строк в коде приложения
             Console: `pybabel extract -o locales/ru/LC_MESSAGES/messages.po ./`
 
