@@ -29,7 +29,8 @@ class SendStrategy:
 
 
 class ResponseType(str, Enum):
-    """Тип ответа сервиса отправки (либо ответ при инициализации отправки, либо при callback'е сервиса)"""
+    """Тип ответа сервиса отправки
+        (либо ответ при инициализации отправки, либо при callback'е сервиса)"""
     send = 'send'
     callback = 'callback'
 
@@ -37,7 +38,8 @@ class ResponseType(str, Enum):
 class ExcludeFieldsModel(BaseModel):
     """Позволяет исключать поля из текущей модели, если у родительской присутствуют лишние
 
-        WARNING: Не документированная в pytdantic функциональность, могут быть проблемы при обновлении
+        WARNING: Не документированная в pytdantic функциональность,
+            могут быть проблемы при обновлении
     """
     def exclude_selected_fields_from_fields(self):
         for field in self._exclude_fields:
