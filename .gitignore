@@ -4,6 +4,7 @@ __pycache__
 .pytest_cache
 .venv*
 .vscode
+.github
 
 .sqlite3
 *.db*
