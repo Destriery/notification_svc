@@ -20,4 +20,3 @@ msgstr ""
 #: /home/destriery/projects/notification_svc/notification_svc/main.py:13
 msgid "Hello!"
 msgstr "Привет!"
-

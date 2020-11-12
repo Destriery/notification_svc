@@ -25,4 +25,3 @@ msgstr ""
 #: /home/destriery/projects/notification_svc/notification_svc/main.py:9
 msgid "Add"
 msgstr ""
-
