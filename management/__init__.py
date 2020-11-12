@@ -2,6 +2,7 @@ import sys
 
 from .babel import Babel
 
+
 def execute_from_command_line(argv: list) -> None:
     """Обрабатывает полученные аргументы командной строки и вызывает необходимые методы"""
     try:

@@ -1,25 +1,27 @@
 from typing import Optional, Any, Dict, List
-from collections import namedtuple
-from enum import Enum, auto
+from enum import Enum
 from datetime import datetime
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from pydantic import fields
 
 from config.locale import _
 
 app = FastAPI()
 
+
 @app.get('/')
 async def root():
     return {'message': _('Hello!'), 'add': _('Add')}
+
 
 @app.get('/en')
 async def en():
     return {'message': _('Hello!')}
 
+
 # models
+
 
 class SendStrategy:
     """Абстрактный класс для стратегий отправки уведомлений"""
@@ -32,6 +34,26 @@ class ResponseType(str, Enum):
     callback = 'callback'
 
 
+class ExcludeFieldsModel(BaseModel):
+    """Позволяет исключать поля из текущей модели, если у родительской присутствуют лишние
+
+        WARNING: Не документированная в pytdantic функциональность, могут быть проблемы при обновлении
+    """
+    def exclude_selected_fields_from_fields(self):
+        for field in self._exclude_fields:
+            try:
+                self.__fields__.pop(field)
+            except KeyError:
+                raise KeyError(
+                    _(f'_exclude_fields in {self.__class__.__name__} has field "{field}" \
+                        which missing in {self.__class__.__name__}`s fields')
+                )
+
+    def __init__(self, **data: Any) -> None:
+        self.exclude_selected_fields_from_fields()
+        super().__init__(**data)
+
+
 class SenderType(BaseModel):
     """Способ отправки уведомления с указанием стратегии отправки"""
     name: str = Field(
@@ -39,12 +61,14 @@ class SenderType(BaseModel):
         )
     strategy: Optional[Any]
 
+
 class Target(BaseModel):
     """Цель уведомления (кому и куда будет отправлено)"""
     sender_type: SenderType
     recipient: str = Field(
             title=_('Recipient'), max_length=32
         )
+
 
 class Response(BaseModel):
     """Ответ используемого сервиса отправки"""
@@ -65,7 +89,7 @@ class Notification(BaseModel):
     targets: List[Target]
     responses: List[Response]
     datetime_create: datetime
-    
+
 
 class NotificationOut(Notification):
     targets: Dict[str, List[str]] = Field(
@@ -73,10 +97,8 @@ class NotificationOut(Notification):
         )
 
 
-class NotificationIn(NotificationOut):
-    id: Any = Field(default=None, const=None)
-    responses: Any = Field(default=None, const=None)
-    datetime_create: Any = Field(default=None, const=None)
+class NotificationIn(NotificationOut, ExcludeFieldsModel):
+    _exclude_fields = ('id', 'responses', 'datetime_create', 'test')
 
 
 # endpoints
@@ -88,10 +110,12 @@ async def set_notification(notification: NotificationIn):
 
     return notification
 
+
 @app.get('/notifications/{id}')
 async def get_notification(id: int):
     """Отдает данные о запрашиваемом по id уведомлении"""
     return {}
+
 
 @app.post('/notifications/{id}/callback')
 async def set_notification_callback(id: int):
@@ -103,6 +127,5 @@ async def set_notification_callback(id: int):
 
 
 class Notifer:
-    
     def __init__(self, id: Optional[int] = None) -> None:
         pass
