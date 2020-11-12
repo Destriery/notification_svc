@@ -4,7 +4,6 @@ repos:
     rev: v2.3.0
     hooks:
     -   id: check-yaml
-    -   id: trailing-whitespace
 -   repo: https://gitlab.com/pycqa/flake8
     rev: ''
     hooks:

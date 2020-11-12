@@ -35,8 +35,8 @@ MENU=(
 )
 select menu in "${MENU[@]}" ; do
     case $REPLY in
-        1) echo INSTALL;;
-        2) echo INSTALL_FOR_DEV;;
+        1) echo $INSTALL;;
+        2) echo $INSTALL_FOR_DEV;;
     esac
 done
 
