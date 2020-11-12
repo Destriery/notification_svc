@@ -9,6 +9,6 @@ __pycache__
 *.log
 *.pyc
 
-local*.py
+local_*.py
 material
 temp

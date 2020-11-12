@@ -9,5 +9,5 @@ __pycache__
 *.db*
 
 *.dev.*
-local*.py
+local_*.py
 material

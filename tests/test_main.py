@@ -35,5 +35,7 @@ def test_exclude_fields_model_with_other_field():
     try:
         ChildModelWithOtherField(first_field=True, second_field=True)
     except KeyError as e:
-        assert e.args[0] == _('_exclude_fields in ChildModelWithOtherField has field "other_field" \
-                                which missing in ChildModelWithOtherField`s fields')
+        assert e.args[0] == _(
+                            '_exclude_fields in ChildModelWithOtherField has field "other_field" '
+                            'which missing in ChildModelWithOtherField`s fields'
+                        )

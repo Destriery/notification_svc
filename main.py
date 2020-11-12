@@ -47,8 +47,10 @@ class ExcludeFieldsModel(BaseModel):
                 self.__fields__.pop(field)
             except KeyError:
                 raise KeyError(
-                    _(f'_exclude_fields in {self.__class__.__name__} has field "{field}" \
-                        which missing in {self.__class__.__name__}`s fields')
+                    _(
+                        f'_exclude_fields in {self.__class__.__name__} has field "{field}" '
+                        f'which missing in {self.__class__.__name__}`s fields'
+                    )
                 )
 
     def __init__(self, **data: Any) -> None:
