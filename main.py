@@ -130,8 +130,9 @@ class EmailSendStrategy(SendStrategy):
 
     class Settings(DefaultSettings):
         """Берутся настройки из файла .env с префиксом EMAIL_"""
+        # TODO Возможно стоит сделать USER и PASSWORD не обязательными
         SSL: str = True
-        PORT: str = 465
+        PORT: int = 465
         HOST: str
         USER: str
         PASSWORD: str
