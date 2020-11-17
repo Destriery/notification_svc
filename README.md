@@ -45,4 +45,4 @@ LOCALE = 'ru'
 5. `python manage.py babel_compile ru` - компилируем .mo файл
 6. Перезагружаем uvicorn
 
-Либо, если требуется перезагрузить уже готовый файл вместо первый двух пунктов делаем `python manage.py babel_reload ru`
+Либо, если требуется перезагрузить уже готовый файл, вместо первый двух пунктов делаем `python manage.py babel_reload ru`
