@@ -12,7 +12,7 @@ class Babel:
     def __init__(self, argv: list) -> None:
         self._get_method(argv)
 
-        self.project_dir = os.path.dirname(os.path.abspath(__file__))
+        self.project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         # Определяем значения некоторых свойств, связанных с локалью по-умолчанию
         self.default_locale_path = f'{LOCALEDIR}/{DEFAULT_LOCALE}/LC_MESSAGES'
