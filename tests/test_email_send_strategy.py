@@ -11,8 +11,7 @@ class TEmailSendStrategy(EmailSendStrategy):
         SSL: str = False
         PORT: int = 8025
         HOST: str = 'localhost'
-        USER: str = 'fdaew@tesfdsaty.ty'
-        PASSWORD: str = ''
+        FROM: str = 'fdaew@tesfdsaty.ty'
 
         class Config:
             env_prefix = 'TEST_EMAIL_'

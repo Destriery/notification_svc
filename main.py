@@ -134,8 +134,10 @@ class EmailSendStrategy(SendStrategy):
         SSL: str = True
         PORT: int = 465
         HOST: str
-        USER: str
-        PASSWORD: str
+        USER: Optional[str] = None
+        PASSWORD: Optional[str] = None
+
+        FROM: str
 
         class Config:
             env_prefix = 'EMAIL_'
@@ -175,7 +177,7 @@ class EmailSendStrategy(SendStrategy):
         return emails.Message(
             subject=self.subject,
             html=self.html,
-            mail_from=('NotificationService', self.stg.USER)
+            mail_from=('NotificationService', self.stg.FROM)
         )
 
     def send(self) -> SMTPResponse:
