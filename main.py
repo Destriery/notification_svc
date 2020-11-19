@@ -1,16 +1,13 @@
-from functools import cached_property
-from typing import Optional, Any, Dict, List, Union
+from typing import Optional, Any, Dict, List
 from enum import Enum
 from datetime import datetime
 
-import emails
-from emails.backend.response import SMTPResponse
-from string import Template
-
 from fastapi import FastAPI
-from pydantic import BaseModel, BaseSettings, Field
+from pydantic import BaseModel, Field
 
 from config.locale import _
+
+from send_strategies.email import EmailSendStrategyByPythonEmails
 
 app = FastAPI()
 
@@ -26,12 +23,6 @@ async def en():
 
 
 # models
-
-
-class SendStrategy:
-    """Абстрактный класс для стратегий отправки уведомлений"""
-    pass
-
 
 class ResponseType(str, Enum):
     """Тип ответа сервиса отправки
@@ -115,81 +106,6 @@ class NotificationIn(NotificationOut, ExcludeFieldsModel):
     _exclude_fields = ('id', 'responses', 'datetime_create')
 
 
-class DefaultSettings(BaseSettings):
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-
-
-class EmailSendStrategy(SendStrategy):
-    """Стратегия отправки писем через smtp-сервер
-        при помощи библиотеки python-emails (`pip install emails`)"""
-
-    subject = _('Message from Notification Service')
-    template = '<html><body>${message}</body></html>'
-
-    class Settings(DefaultSettings):
-        """Берутся настройки из файла .env с префиксом EMAIL_"""
-        # TODO Возможно стоит сделать USER и PASSWORD не обязательными
-        SSL: str = True
-        PORT: int = 465
-        HOST: str
-        USER: Optional[str] = None
-        PASSWORD: Optional[str] = None
-
-        FROM: str
-
-        class Config:
-            env_prefix = 'EMAIL_'
-
-    def __init__(self, to: Union[str, List[str]], message: str = '') -> None:
-        """Задаются почта получателя и формируется сообщение по шаблону
-            также инициализируются настройки"""
-        self.email_to = to
-        self.html = message
-
-        self.stg = self.Settings()
-
-    @cached_property
-    def connection_params(self) -> dict:
-        """Задаются параметры соединения"""
-        return dict(
-            host=self.stg.HOST,
-            port=self.stg.PORT,
-            ssl=self.stg.SSL,
-            user=self.stg.USER,
-            password=self.stg.PASSWORD
-        )
-
-    @property
-    def html(self) -> str:
-        """Итоговый html для отправки"""
-        return self._html
-
-    @html.setter
-    def html(self, message: str = '') -> None:
-        """Формируется итоговый html на основе шаблона и входящего сообщения"""
-        self._html = Template(self.template).substitute(message=message)
-
-    @property
-    def message(self) -> emails.Message:
-        """Объект сообщения для отправки"""
-        return emails.Message(
-            subject=self.subject,
-            html=self.html,
-            mail_from=('NotificationService', self.stg.FROM)
-        )
-
-    def send(self) -> SMTPResponse:
-        """Отправка сообщения"""
-        response = self.message.send(
-            to=self.email_to,
-            smtp=self.connection_params
-        )
-
-        return response
-
-
 # endpoints
 
 
@@ -197,7 +113,7 @@ class EmailSendStrategy(SendStrategy):
 @app.post('/notifications')
 async def set_notification(notification: NotificationIn):
     """Получает запрос на отправку уведомления со стороннего сервиса"""
-    r = EmailSendStrategy('izzon@yandex.ru', 'Test')
+    r = EmailSendStrategyByPythonEmails('izzon@yandex.ru', 'Test')
     r.send()
 
     return notification

@@ -1,32 +1,33 @@
 import threading
 import asyncore
 
-from main import EmailSendStrategy
+from send_strategies.email import EmailSendStrategyByPythonEmails
 
 from tests.fakesmtp import FakeSMTPServer
 
 
-class TEmailSendStrategy(EmailSendStrategy):
-    class Settings(EmailSendStrategy.Settings):
-        SSL: str = False
-        PORT: int = 8025
-        HOST: str = 'localhost'
-        FROM: str = 'fdaew@tesfdsaty.ty'
+class Settings(EmailSendStrategyByPythonEmails.Settings):
+    SSL: bool = False
+    PORT: int = 8025
+    HOST: str = 'localhost'
+    FROM: str = 'fdaew@tesfdsaty.ty'
 
-        class Config:
-            env_prefix = 'TEST_EMAIL_'
+    class Config:
+        env_prefix = 'TEST_EMAIL_'
 
 
-class TestEmailSendStrategy:
+EmailSendStrategyByPythonEmails.Settings = Settings
+
+
+class TestEmailSendStrategyByPythonEmails:
     email_to = 'fdaew@tesfdsaty.ty'
     message = 'Test'
 
     def setup_class(self):
-        self.strategy = TEmailSendStrategy(self.email_to, self.message)
-        self.connection_params = {'host': self.strategy.stg.HOST, 'port': self.strategy.stg.PORT}
-        self.strategy.connection_params = self.connection_params
+        self.strategy = EmailSendStrategyByPythonEmails(self.email_to, self.message)
 
-        self.smtp_server = FakeSMTPServer(tuple([*self.connection_params.values()]), None)
+        self.smtp_server = FakeSMTPServer(tuple(self.strategy.connection_params.values()), None)
+
         # запуск демона для прослушивания smtp порта
         self.smtp_loop = threading.Thread(target=asyncore.loop, daemon=True)
         self.smtp_loop.start()
@@ -35,7 +36,7 @@ class TestEmailSendStrategy:
         self.smtp_server.close()
 
     def test_init_object(self):
-        assert isinstance(self.strategy, EmailSendStrategy)
+        assert isinstance(self.strategy, EmailSendStrategyByPythonEmails)
 
     def test_html(self):
         assert self.strategy.html == \
