@@ -1,5 +1,7 @@
+import os
 from pydantic import BaseSettings
 
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Babel
 DEFAULT_LOCALE = 'en'

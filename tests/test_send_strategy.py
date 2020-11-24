@@ -1,12 +1,40 @@
+import json
 import threading
 import asyncore
 
-from send_strategies.email import EmailSendStrategyByPythonEmails
+from app.send_strategies.file import FileSendStrategy
+from app.send_strategies.email import EmailSendStrategyByPythonEmails
 
 from tests.fakesmtp import FakeSMTPServer
 
 
-class Settings(EmailSendStrategyByPythonEmails.Settings):
+class FileSendStrategySettings(FileSendStrategy.Settings):
+
+    class Config:
+        env_prefix = 'TEST_FILE_'
+
+
+class TestFileSendStrategy:
+    to = 'test_file_send_strategy.txt'
+    message = 'Test'
+
+    def setup_class(self):
+        self.strategy = FileSendStrategy(self.to, self.message)
+
+    def test_html(self):
+        assert self.strategy.html == \
+                self.strategy.template.replace('${message}', self.message)
+
+    def test_send(self):
+        response = self.strategy.send()
+
+        assert str(response) == json.dumps({'status': 'writed'})
+
+        with open(self.strategy.file_path, 'r') as file:
+            assert file.read() == self.message
+
+
+class EmailSendStrategyByPythonEmailsSettings(EmailSendStrategyByPythonEmails.Settings):
     SSL: bool = False
     PORT: int = 8025
     HOST: str = 'localhost'
@@ -16,7 +44,7 @@ class Settings(EmailSendStrategyByPythonEmails.Settings):
         env_prefix = 'TEST_EMAIL_'
 
 
-EmailSendStrategyByPythonEmails.Settings = Settings
+EmailSendStrategyByPythonEmails.Settings = EmailSendStrategyByPythonEmailsSettings
 
 
 class TestEmailSendStrategyByPythonEmails:

@@ -5,10 +5,10 @@ __pycache__
 .git
 .vscode
 .venv*
+.temp
 
 *.log
 *.pyc
 
 local_*.py
 material
-temp

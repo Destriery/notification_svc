@@ -1,7 +1,7 @@
 from typing import Any
 from pydantic import BaseModel
 
-from main import ExcludeFieldsModel
+from app.schema import ExcludeFieldsModel
 from config.locale import _
 
 

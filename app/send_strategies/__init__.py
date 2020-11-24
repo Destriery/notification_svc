@@ -1,5 +1,7 @@
+import json
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from functools import cached_property
+from typing import Any, List, Optional, Union
 
 from string import Template
 
@@ -7,8 +9,22 @@ from config.locale import _
 from config.settings import DefaultSettings
 
 
+class Response:
+    """Ответ сервиса от SendStrategy"""
+    original_response: Any = None
+
+    def __init__(self, original_response) -> None:
+        self.original_response = original_response
+
+    def __str__(self):
+        """Преобразуем ответ в строку в формате JSON"""
+        return json.dumps(self.original_response)
+
+
 class SendStrategy(ABC):
-    """Абстрактный класс для стратегий отправки уведомлений"""
+    """Абстрактный класс для стратегий отправки уведомлений \n
+        to: str - кому отправлять \n
+        message: str - сообщение"""
     template = '${message}'
 
     class Settings(DefaultSettings):
@@ -19,7 +35,7 @@ class SendStrategy(ABC):
         self.stg = self.Settings()
 
         self.to = to or self.stg.TO
-        self.html = message
+        self.message = message
 
     @property
     def to(self) -> str:
@@ -37,17 +53,12 @@ class SendStrategy(ABC):
                 _('"{}" was not specified').format('to')
             )
 
-    @property
+    @cached_property
     def html(self) -> str:
-        """Итоговый html для отправки"""
-        return self._html
-
-    @html.setter
-    def html(self, message: str = '') -> None:
         """Формируется итоговый html на основе шаблона и входящего сообщения"""
-        self._html = Template(self.template).substitute(message=message)
+        return Template(self.template).substitute(message=self.message)
 
     @abstractmethod
-    def send(self) -> object:
+    def send(self) -> Response:
         """Отправка сообщения, возвращаем response"""
         pass

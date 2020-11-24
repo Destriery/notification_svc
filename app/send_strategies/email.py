@@ -1,13 +1,16 @@
-from typing import Optional
+from typing import Optional, TypeVar
 from functools import cached_property
 from abc import abstractproperty
 
 import emails
 from emails.backend.response import SMTPResponse
 
-from send_strategies import SendStrategy
+from app.send_strategies import SendStrategy, Response
 
 from config.locale import _
+
+
+Message = TypeVar('Message')
 
 
 class EmailSendStrategy(SendStrategy):
@@ -31,14 +34,20 @@ class EmailSendStrategy(SendStrategy):
             env_prefix = 'EMAIL_'
 
     @abstractproperty
-    def connection_params(self) -> object:
+    def connection_params(self) -> dict:
         """Задаются параметры соединения"""
         pass
 
     @abstractproperty
-    def message(self) -> object:
+    def email_message(self) -> Message:
         """Объект сообщения для отправки"""
         pass
+
+
+class EmailResponseByPythonEmails(Response):
+    @cached_property
+    def status_code(self):
+        return self.original_response.status_code
 
 
 class EmailSendStrategyByPythonEmails(EmailSendStrategy):
@@ -59,7 +68,7 @@ class EmailSendStrategyByPythonEmails(EmailSendStrategy):
         return {key: value for key, value in params.items() if params[key]}
 
     @property
-    def message(self) -> emails.Message:
+    def email_message(self) -> emails.Message:
         """Объект сообщения для отправки"""
         return emails.Message(
             subject=self.subject,
@@ -69,9 +78,9 @@ class EmailSendStrategyByPythonEmails(EmailSendStrategy):
 
     def send(self) -> SMTPResponse:
         """Отправка сообщения"""
-        response = self.message.send(
+        response = self.email_message.send(
             to=self.to,
             smtp=self.connection_params
         )
 
-        return response
+        return EmailResponseByPythonEmails(response)
