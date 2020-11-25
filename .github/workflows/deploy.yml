@@ -33,5 +33,5 @@ jobs:
         mkdir .ssh
         echo "$KEY" > .ssh/id_rsa
         echo "$ENV" > .env
-        scp -o "StrictHostKeyChecking=no" .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
+        scp -o "StrictHostKeyChecking=no" -i ".ssh/id_rsa" .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
           
