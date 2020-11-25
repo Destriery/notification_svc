@@ -5,6 +5,7 @@ name: Deploy
 
 on:
   push:
+    branches: [ master ]
     tags: 'v*.*.*'
 
 jobs:
@@ -40,4 +41,5 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         script: ~/projects/notification_svc/notification_svc/deploy_project.sh
+        debug: true
         
