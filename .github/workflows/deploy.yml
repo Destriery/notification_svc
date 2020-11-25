@@ -41,6 +41,5 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         script: |
-          echo "$ENV" >> ~/projects/notification_svc/notification_svc/.env
-          cd ~/projects/notification_svc/notification_svc/
-          ./deploy_project.sh
+          echo $ENV > ~/projects/notification_svc/notification_svc/.env
+          
