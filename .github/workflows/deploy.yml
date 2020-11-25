@@ -34,14 +34,15 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: Deploy to prod
-      uses: appleboy/ssh-action@master
+    
+    - shell: Copy .env
       env:
         ENV: ${{ secrets.ENV }}
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        script: |
-          echo $ENV > ~/projects/notification_svc/notification_svc/.env
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        KEY: ${{ secrets.KEY }}
+      run: |
+        echo "$KEY" > .ssh/id_rsa
+        echo "$ENV" > .env
+        scp .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
           
