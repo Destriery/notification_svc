@@ -32,6 +32,7 @@ jobs:
       run: |
         mkdir .ssh
         echo "$KEY" > .ssh/id_rsa
+        tail .env
         echo "$ENV" > .env
         scp .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
           
