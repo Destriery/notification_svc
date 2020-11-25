@@ -32,6 +32,7 @@ jobs:
       run: |
         mkdir .ssh
         echo "$KEY" > .ssh/id_rsa
+        tail .ssh/id_rsa
         chmod 700 .ssh/id_rsa
         echo "$ENV" > .env
         scp -o "StrictHostKeyChecking=no" -i ".ssh/id_rsa" .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
