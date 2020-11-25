@@ -36,6 +36,8 @@ jobs:
         pytest
     - name: Deploy to prod
       uses: appleboy/ssh-action@master
+      env:
+        ENV: ${{ secrets.ENV }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
