@@ -22,6 +22,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        mkdir .temp
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        flake8 . --ignore=D203,E121,E126 --max-line-length=100
+    - name: Test with pytest
+      run: |
+        pytest
     - name: Copy .env
       shell: bash
       env:
@@ -32,8 +44,18 @@ jobs:
       run: |
         mkdir .ssh
         echo "$KEY" > .ssh/id_rsa
-        tail .ssh/id_rsa
         chmod 700 .ssh/id_rsa
         echo "$ENV" > .env
         scp -o "StrictHostKeyChecking=no" -i ".ssh/id_rsa" .env "$USERNAME@$HOST:~/projects/notification_svc/notification_svc/"
+    - name: Deploy to prod
+      uses: appleboy/ssh-action@master
+      env:
+        ENV: ${{ secrets.ENV }}
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd ~/projects/notification_svc/notification_svc/
+          ./deploy_project.sh
           
